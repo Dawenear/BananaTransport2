@@ -1,0 +1,13 @@
+{
+  "autoload": {
+    "psr-4": {
+      "App\\": "App",
+      "App\\Models\\": "App/Models",
+      "App\\Controllers\\": "App/Controllers"
+    }
+  },
+  "require": {
+    "justinrainbow/json-schema": "^5.2",
+    "ext-json": "*"
+  }
+}
