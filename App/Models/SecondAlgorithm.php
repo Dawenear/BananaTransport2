@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Exception;
 
+
+/**
+ * I got an idea merging path into smaller chunks. This is end result
+ */
 class SecondAlgorithm extends ProcessAlgorithm
 {
-    protected const NAME = 'First';
+    protected const NAME = 'Second';
 
     /**
      * @param array $notes
@@ -15,38 +19,29 @@ class SecondAlgorithm extends ProcessAlgorithm
      */
     public function process(array $notes): array
     {
-        $helpArray = $notes;
-        $notes = [];
-        $notes[0] = $helpArray[0];
-        $startLocation = $helpArray[0]->getStartLocation();
-        $endLocation = $helpArray[0]->getEndLocation();
-        $countNotes = count($helpArray);
-        unset($helpArray[0]);
+        array_walk($notes, function(&$note) {$note = [$note];});
 
-
-        while (count($notes) !== $countNotes) {
-            $currentCount = count($notes);
-            foreach ($helpArray as $index => $helpNote) {
-                if ($startLocation === $helpNote->getEndLocation()) {
-                    $startLocation = $helpNote->getStartLocation();
-                    array_unshift($notes , $helpNote);
-                    unset($helpArray[$index]);
-                } elseif ($endLocation === $helpNote->getStartLocation()) {
-                    $endLocation = $helpNote->getEndLocation();
-                    $notes[] = $helpNote;
-                    unset($helpArray[$index]);
+        while (count($notes) > 1) {
+            $processedNote = array_shift($notes);
+            foreach ($notes as &$note) {
+                if ($processedNote[0]->getStartLocation() === end($note)->getEndLocation()) {
+                    $note = array_merge($note, $processedNote);
+                    continue 2;
+                }
+                if ($note[0]->getStartLocation() === end($processedNote)->getEndLocation()) {
+                    $note = array_merge($processedNote, $note);
+                    continue 2;
                 }
             }
-            if ($currentCount === count($notes)) {
-                throw new Exception('This chain is broken');
-            }
+
+            throw new Exception('This chain is broken');
         }
 
         return [
             'name' => self::NAME,
-            'start' => $startLocation,
-            'end' => $endLocation,
-            'route' => $notes,
+            'start' => $notes[0][0]->getStartLocation(),
+            'end' => end($notes[0])->getEndLocation(),
+            'route' => $notes[0],
         ];
     }
 }

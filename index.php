@@ -18,7 +18,10 @@ if (!$notes = file_get_contents($argv[1])){
 try {
     $handler = new App\Controllers\ProcessDelivery();
     $handler->registerAlgorithm('\\App\\Models\\FirstAlgorithm');
-    $handler->registerAlgorithm('\App\Models\SecondAlgorithm');
+    $handler->registerAlgorithm('\\App\\Models\\SecondAlgorithm');
+    $handler->registerAlgorithm('\\App\\Models\\ThirdAlgorithm');
+    $handler->registerAlgorithm('\\App\\Models\\FourthAlgorithm');
+    $handler->registerAlgorithm('\\App\\Models\\FifthAlgorithm');
     echo $handler->handleRoute($notes);
 } catch (Exception $e) {
     echo $e->getMessage();
